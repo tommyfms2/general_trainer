@@ -1,6 +1,6 @@
 from injector import inject, Module, Binder
 
-from src.application.domain.model.training_config import TrainingConfig
+from src.application.service.training_config_factory import TrainingConfigFactory
 from src.application.repository.config_repository import ConfigRepository
 from src.application.repository.dataset_repository import DatasetRepository
 from src.infrastructure.repository.config_repository_impl import ConfigRepositoryImpl
@@ -14,9 +14,9 @@ class ConfigBuilderService:
         self.config_repository = config_repository
 
     def build(self, args):
-        dataset = self.dataset_repository.load_dataset(args.input_file_fullname, args.delimiter)
+        dataset = self.dataset_repository.load(args.input_file_fullname, args.delimiter, False)
 
-        training_config = TrainingConfig.create_default_config(
+        training_config = TrainingConfigFactory.create_default_config(
             dataset=dataset,
             input_file_fullname=args.input_file_fullname,
             output_dir_name=args.output_dir_name,

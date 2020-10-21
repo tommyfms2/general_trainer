@@ -29,3 +29,8 @@ class ConfigRepositoryImpl(ConfigRepository):
 
         with open('./configs/' + config_name + "/conf.yml", "w") as f:
             yaml.dump(config, f, encoding='utf-8', allow_unicode=True, default_flow_style=False, sort_keys=False)
+
+    def load(self, config_file_fullname: str) -> dict:
+        with open(config_file_fullname, "r+") as f:
+            configs = yaml.load(f)
+        return configs
