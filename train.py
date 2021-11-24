@@ -2,14 +2,15 @@ import argparse
 
 from injector import Injector
 
-from src.application.service.training_service import TrainingServiceModule, TrainingService
+from src.application.domain.service.training_service import TrainingServiceModule
+from src.application.service.learning_service import LearningService, LearningServiceModule
 
 
 def main(args):
-    injector = Injector([TrainingServiceModule()])
-    training_service = injector.get(TrainingService)
+    injector = Injector([LearningServiceModule(), TrainingServiceModule()])
+    learning_service = injector.get(LearningService)
 
-    training_service.train(args.config, args.test)
+    learning_service.run(args.config, args.test)
 
 
 if __name__ == "__main__":
@@ -19,4 +20,3 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     main(args)
-

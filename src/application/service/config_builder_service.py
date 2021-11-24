@@ -1,8 +1,8 @@
 from injector import inject, Module, Binder
 
-from src.application.service.training_config_factory import TrainingConfigFactory
 from src.application.repository.config_repository import ConfigRepository
 from src.application.repository.dataset_repository import DatasetRepository
+from src.application.service.training_config_factory import TrainingConfigFactory
 from src.infrastructure.repository.config_repository_impl import ConfigRepositoryImpl
 from src.infrastructure.repository.dataset_repository_impl import DatasetRepositoryImpl
 

@@ -2,6 +2,7 @@ import csv
 
 import pandas as pd
 
+from src.application.domain.model.value.model_config import ModelConfig
 from src.application.repository.dataset_repository import DatasetRepository
 
 
