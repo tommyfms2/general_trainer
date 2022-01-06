@@ -43,7 +43,7 @@ class TrainingService:
             epochs=train_config.model_config.epochs,
             verbose=1,
             shuffle=True,
-            validation_data=[test_x, test_y],
+            validation_data=(test_x, test_y),
             callbacks=[cb]
         )
 

@@ -18,7 +18,7 @@ class InputData:
         X = self.data[:threshold][columns_to_use].astype(int).values
         X_v = self.data[threshold:][columns_to_use].astype(int).values
         y = self.data[:threshold][target_column.name].astype(float).values
-        y_v = self.data[threshold][target_column.name].astype(float).values
+        y_v = self.data[threshold:][target_column.name].astype(float).values
 
         seed = 1
         np.random.seed(seed)

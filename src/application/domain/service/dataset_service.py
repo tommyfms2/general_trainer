@@ -55,7 +55,12 @@ class DatasetService:
 
         label_encoder_config['column_model_input_limits'] = column_limits
 
-        column_model_input_limits = train_config.only_train_column_limits(column_limits)
+        # 学習データの各カラムの最大入力値をもっておく
+        column_model_input_limits = []
+        columns_be_used = dataset.columns.tolist()
+        for c_name in columns_be_used:
+            if c_name in column_limits:
+                column_model_input_limits.append(column_limits[c_name])
 
         return InputData(dataset), column_model_input_limits, label_encoder_config
 

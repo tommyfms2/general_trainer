@@ -16,6 +16,7 @@ class TextColumn(Column):
             datasets[header] = \
                 [chara_label_dict[x] for x in datasets[self.name].str[chara_idx].fillna('nan').values.tolist()]
             limit_of_columns[header] = len(chara_label_dict) + 1
+        del datasets[self.name]
 
         return {'mapping': "text_encoded"}, limit_of_columns
 
