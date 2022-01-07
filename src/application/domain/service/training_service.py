@@ -18,7 +18,8 @@ class TrainingService:
         self.keras_model_factory = keras_model_factory
         self.output_repository = output_repository
 
-    def run(self, input_data: InputData, train_config: TrainConfig, column_model_input_limits: List[int]):
+    def run(self, input_data: InputData, train_config: TrainConfig, column_model_input_limits: List[int],
+            label_encoder_config: dict):
         model = self.keras_model_factory.build(train_config.model_config, column_model_input_limits)
 
         (train_x, train_y, test_x, test_y, val_x, val_y) = input_data.create_x_t(train_config.target_column)
@@ -49,6 +50,12 @@ class TrainingService:
 
         # 結果を保存する
         self.output_repository.save_weight(output_directory, 'model_weights.hdf5', model)
+
+        # エンコード設定を保存する
+        self.output_repository.save_yaml(output_directory, 'label_encoder_config.yaml', label_encoder_config)
+
+        # 学習設定ファイルをコピーする
+        self.output_repository.copy(train_config.config_relative_path, output_directory + "/conf.yaml")
 
     def make_callbacks(self, snapshot_directory: str):
         model_f = self.output_repository.reset_file(snapshot_directory,

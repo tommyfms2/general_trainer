@@ -1,6 +1,6 @@
-from tensorflow import keras
-
 from abc import ABCMeta, abstractmethod
+
+from tensorflow import keras
 
 
 class OutputRepository(metaclass=ABCMeta):
@@ -19,3 +19,11 @@ class OutputRepository(metaclass=ABCMeta):
     @abstractmethod
     def save_weight(self, base_directory: str, filename: str, model: keras.models.Model):
         raise NotImplementedError(self.__class__, "is not implemented.")
+
+    @abstractmethod
+    def copy(self, from_file: str, to_file) -> None:
+        raise NotImplementedError(self.__class__, " is not implemented.")
+
+    @abstractmethod
+    def save_yaml(self, base_directory: str, filename: str, content: dict):
+        raise NotImplementedError(self.__class__, " is not implemented.")

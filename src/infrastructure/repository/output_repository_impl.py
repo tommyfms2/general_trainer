@@ -1,6 +1,7 @@
 import os
 import shutil
 
+import yaml
 from tensorflow import keras
 
 from src.application.repository.output_reository import OutputRepository
@@ -31,9 +32,10 @@ class OutputRepositoryImpl(OutputRepository):
         print('saving weights...')
         model.save_weights(os.path.join(base_directory, filename))
 
+    def copy(self, from_file: str, to_file) -> None:
+        shutil.copy(from_file, to_file)
 
-
-
-
-
-
+    def save_yaml(self, base_directory: str, filename: str, content: dict):
+        with open(base_directory + "/" + filename, "w", encoding='utf-8') as f:
+            yaml.dump(content, f, encoding='utf-8', allow_unicode=True, default_flow_style=False,
+                      sort_keys=False)
