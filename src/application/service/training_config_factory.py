@@ -1,6 +1,7 @@
 import pandas as pd
 
-class TrainingConfig:
+
+class TrainingConfigFactory:
 
     @staticmethod
     def create_default_config(dataset: pd.DataFrame,
@@ -26,7 +27,7 @@ class TrainingConfig:
 
         headers = dataset.columns.values.tolist()
 
-        if not target_column in headers:
+        if target_column not in headers:
             raise ValueError("There is not column name of ", target_column)
 
         for h in headers:
