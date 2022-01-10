@@ -34,5 +34,11 @@ class InputData:
 
         return (X_train, y_train, X_test, y_test, X_val, y_v)
 
+    def create_x_pred(self, target_column: TargetColumn):
+        columns_to_use = self.data.columns.tolist()
+        if target_column.name in columns_to_use:
+            columns_to_use.remove(target_column.name)
 
+        X = self.data[columns_to_use].astype(int).values
 
+        return [X[:, i] for i in range(X.shape[1])]

@@ -1,6 +1,4 @@
-from typing import Any
-
-from injector import inject, Module, Binder, InstanceProvider
+from injector import inject, Module, Binder
 
 from src.application.domain.service.dataset_service import DatasetService
 from src.application.domain.service.training_service import TrainingService
@@ -31,10 +29,10 @@ class LearningService:
 
         # 前処理
         input_data, column_model_input_limits, label_encoder_config = \
-            self.dataset_service.label_by_config(dataset, train_config)
+            self.dataset_service.preprocessing(dataset, train_config)
 
         # 学習
-        self.training_service.run(input_data, train_config, column_model_input_limits, label_encoder_config)
+        self.training_service.train(input_data, train_config, column_model_input_limits, label_encoder_config)
 
 
 class LearningServiceModule(Module):

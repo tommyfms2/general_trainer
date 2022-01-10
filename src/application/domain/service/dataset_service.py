@@ -15,13 +15,42 @@ class DatasetService:
     def __init__(self):
         None
 
-    def label_by_config(self, dataset: pd.DataFrame, train_config: TrainConfig) -> (InputData, List[int], dict):
-        print("### preprocessing...")
+    def preprocessing(self, dataset: pd.DataFrame, train_config: TrainConfig) -> (InputData, List[int], dict):
 
         dataset = self.purge_rows_having_problems(dataset, train_config.target_column,
                                                   train_config.train_column_configs)
 
-        return self.preprocessing(dataset, train_config)
+        chara_label_dict = self.create_chara_labels(dataset, train_config.train_column_configs)
+
+        label_encoder_config = {'text_encoded': chara_label_dict, 'encoder_dict': {}}
+        column_limits = {}
+        for train_column_config in tqdm(train_config.train_column_configs):
+            # datasetを参照渡しで更新する
+            encoded_method, limit_of_this_column = train_column_config.encode(dataset, chara_label_dict)
+            label_encoder_config['encoder_dict'][train_column_config.name] = encoded_method
+            column_limits.update(limit_of_this_column)
+
+        label_encoder_config['column_model_input_limits'] = column_limits
+
+        # 学習データの各カラムの最大入力値をもっておく
+        column_model_input_limits = []
+        columns_be_used = dataset.columns.tolist()
+        for c_name in columns_be_used:
+            if c_name in column_limits:
+                column_model_input_limits.append(column_limits[c_name])
+
+        return InputData(dataset), column_model_input_limits, label_encoder_config
+
+    def preprocessing_for_prediction(self, dataset: pd.DataFrame, train_config: TrainConfig,
+                                     label_encoder_config: dict) -> InputData:
+
+        dataset = self.purge_rows_having_problems(dataset, train_config.target_column,
+                                                  train_config.train_column_configs)
+
+        for train_column_config in tqdm(train_config.train_column_configs):
+            # datasetを参照渡しで更新する
+            _, _ = train_column_config.encode(dataset, label_encoder_config['text_encoded'])
+        return InputData(dataset)
 
     def purge_rows_having_problems(self, dataset: pd.DataFrame, target_column: TargetColumn,
                                    train_column_configs: List[Column]) -> pd.DataFrame:
@@ -41,28 +70,6 @@ class DatasetService:
         dataset = dataset[~(dataset[target_column.name] == '')]
         dataset = dataset[~dataset[target_column.name].isnull()]
         return dataset
-
-    def preprocessing(self, dataset: pd.DataFrame, train_config: TrainConfig) -> (InputData, List[int], dict):
-
-        chara_label_dict = self.create_chara_labels(dataset, train_config.train_column_configs)
-
-        label_encoder_config = {'text_encoded': chara_label_dict, 'encoder_dict': {}}
-        column_limits = {}
-        for train_column_config in tqdm(train_config.train_column_configs):
-            encoded_method, limit_of_this_column = train_column_config.encode(dataset, chara_label_dict)
-            label_encoder_config['encoder_dict'][train_column_config.name] = encoded_method
-            column_limits.update(limit_of_this_column)
-
-        label_encoder_config['column_model_input_limits'] = column_limits
-
-        # 学習データの各カラムの最大入力値をもっておく
-        column_model_input_limits = []
-        columns_be_used = dataset.columns.tolist()
-        for c_name in columns_be_used:
-            if c_name in column_limits:
-                column_model_input_limits.append(column_limits[c_name])
-
-        return InputData(dataset), column_model_input_limits, label_encoder_config
 
     def create_chara_labels(self, dataset: pd.DataFrame, train_column_configs: List[Column]) -> dict:
         charas = {}
