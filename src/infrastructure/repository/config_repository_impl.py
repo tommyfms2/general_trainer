@@ -96,10 +96,10 @@ class ConfigRepositoryImpl(ConfigRepository):
         model.save_weights(os.path.join(base_directory, self.weight_filename))
 
     def load_weight(self, base_directory: str, filename: str, model: keras.models.Model) -> keras.models.Model:
-        weight_path = os.path.join(base_directory, filename)
         if filename == '':
-            weight_path = os.path.join(base_directory, self.weight_filename)
-        model.load_weights(weight_path)
+            model.load_weights(os.path.join(base_directory, self.weight_filename))
+        else:
+            model.load_weights(filename)
         return model
 
     def copy(self, from_file: str, to_file) -> None:
